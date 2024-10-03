@@ -1,4 +1,7 @@
+
 Fyrir dæmi 1 þarf að huga að eftirfarandi atriðum til að fá kóðann til að virka.
+=======
+
 
 1. Fá SQLite inn í kerfið (ef það er nú þegar ekki til staðar).
 
