@@ -40,7 +40,7 @@ SELECT name, SUM(frequency) AS total_frequency
 FROM names
 WHERE name IN ('Snæfríður', 'Dalrós', 'Erlendur') AND type ="first"
 GROUP BY name
-ORDER BY total_frequency ASC
+ORDER BY total_frequency DESC
 LIMIT 1;
 
 --Spurning 2, hvenær voru nöfnin vinsælust?

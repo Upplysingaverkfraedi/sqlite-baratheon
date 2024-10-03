@@ -1,0 +1,104 @@
+1. Tíðni nafna á íslandi
+
+Tilgangur vekefnisins er að sameina gögn út tveimur CVS skrám í einn SQLite gagngagrunnþ
+Í honum verða gögnin í einni töflu sem er síðan hægt að sækja upplýsingar úr og svara
+spurningum úr grunninum.
+
+Kóðann má finna á names.sql skránni en skoðum nánar virkni hans og ákveðnar skipunir innan hans.
+
+CREATE TABLE IF NOT EXISTS names
+
+Er skipunin sem er notuð til að búa til bæði names og temp töfluna. Sér til þess að hún sé eingöngu
+búin til ef hún er ekki nú þegar til. Þetta hjæalpar til við villur og veitir skýrleika.
+
+.mode csv
+.import data/first_names_freq.csv temp
+
+Hér má sjá SQLite skipunina: .import, en hún er notuð til að færa gögn frá skrá inn í töflu.
+
+
+INSERT INTO names (name, year, frequency, type)
+SELECT name, year, frequency, 'first' FROM temp;
+
+Hér má sjá dæmi um hvernig SQL skipunin INSERT INTO, er notuð til að setja inn gögn í töflu.
+Skipunin SELECT velur gögn frá temp töfunni og færir inn í names töfluna. ,,first" er hér notað
+sem gildi fyrir type dálkinn, á í þessu tilfelli við eiginöfn.
+
+DELETE FROM temp;
+
+DELETE FROM skipunin eyðir öllum skrám úr temp töflunni. En sú tafla var búin til ofar í kóðanum.
+
+Sama er síðan gert til að sækja gögnin um seinni eiginöfn inn í töfluna. Að lokum er þó notað:
+
+DROP TABLE IF EXISTS temp;
+
+En DROP TABLE IF EXISTS eyðir töflunni en ekki er þörf á henni lengur þar sem gögnin sem á að vinna með
+eru öll komin yfir í names töfluna.
+Temp taflan er í raun notið sem tímabundin staðsetning fyrir CVS gögnin. En það er þæginlægt því þá er
+fyrst hægt að taka gögn af CSV skránum og síðan setja inn í SQLite töfluna.
+
+
+í spurningu eitt er verið að leita eftir algengasta nafninu milli hópmeðlima.
+
+SELECT name, SUM(frequency) AS total_frequency
+FROM names
+WHERE name IN ('Snæfríður', 'Dalrós', 'Erlendur') AND type = 'first'
+GROUP BY name
+ORDER BY total_frequency DESC
+LIMIT 1;
+
+Í fyrstu línu kóðans er valið (SELECT) nafn og heildar algengi hvers nafns. Eru SQL
+skipanirnar hér nokkuð auðskýranlegar og framkvæma það sem maður ímyndar sér að þær geri.
+FROM skipunin velur úr töflunni names.
+WHERE, skipunin takmarkar nöfnin sem leitað er eftir í þessi þrjú nöfn.
+AND type = 'first, sér til þess að aðeins sé skoðað eignöfn þar sem spurning er að leita eftir
+því.
+GROUP BY name skipunin, skiptir niðurstöðunum eftir hverju nafni.
+ORDER BY total_frequency DESC setur niðurstöðurnar í lækkandi röð
+með algenasta nafninu efst. Limit 1: sér til þess að aðeins ein röð prentast eða niðurstöður fyrir
+algengasta nafnið en ekki hin tvö líka.
+
+Svar:
+Erlendur,234
+
+Af nöfnunum þremur er Erlendur algengasta eiginafnið með 234 niðurstöður.
+
+
+Spurning tvö snýst um að finna hvenær nönfnin voru vinsælust.
+
+SELECT name, year, MAX(frequency) AS max_frequency
+FROM names
+WHERE name IN ('Snæfríður', 'Dalrós', 'Erlendur')
+GROUP BY name
+ORDER BY name;
+
+MAX(frequency) skipunuin finnur hámarks algengni fyrir hvert nafn. Finnur í leið árið sem það var algengast.
+Sama að ofan að skipunin FROM finnur þessi gögn í töflunni names. GROUP BY name skiptir niðurstöðunum eftir nafni.
+Þannig hvert nafn fær sína niðurstöðu. ORDER BY name, skipunin prentar niðurstöðurnar í stafrósröð.
+
+Svar:
+"Dalrós",1998,2
+Erlendur,1970,11
+"Snæfríður",1992,6
+
+Samkvæmt niðurstöðunum var Dalrós vinsælast árið 1998 þegar tvær voru nefndar því nadniþ Árið 1970 var Erlendur
+vinsælast með ellefu sem voru skírðir því nafni. Snæfríður reyndist svo vinsælast 1992 þegar sex voru skírðir það.
+
+
+í spurningu þrjú á að finna hvaða ár nöfnin komu fyrst fram.
+
+SELECT name, MIN(year) AS first_appearance
+FROM names
+WHERE name IN ('Snæfríður', 'Dalrós', 'Erlendur')
+GROUP BY name
+ORDER BY name;
+
+Skipunin MIN(year) finnur lægsta ártalið sem hvert nafn birtist. Sömu SQL skipanir gilda og að ofan. Niðurstöður
+teknar úr töflunni names. Flokkaðar eftir nafni og settar í stafrósröð.
+
+Svar:
+"Dalrós",1918
+Erlendur,1912
+"Snæfríður",1926
+
+Samkvæmt töflunni með gögnunum kemur Dalrós fyrst fram 1918, nafnð Erlendur upp 1912 og Snæfríður 1926.
