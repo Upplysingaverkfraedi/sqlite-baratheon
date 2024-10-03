@@ -2,19 +2,25 @@
 WITH RECURSIVE split(characters, str) AS (
     SELECT
         '',
-        characters||','
+        characters || ','
     FROM
         books
-    UNION ALL SELECT
-        TRIM(substr(str, 0, instr(str, ','))),
-        substr(str, instr(str, ',')+1)
-    FROM split
-    WHERE str != ''
+    UNION ALL
+    SELECT
+        TRIM(SUBSTR(str, 0, INSTR(str, ','))),
+        SUBSTR(str, INSTR(str, ',') + 1)
+    FROM
+        split
+    WHERE
+        str != ''
 )
 SELECT
     COUNT(DISTINCT characters)
-FROM split
-WHERE characters != '';
+FROM
+    split
+WHERE
+    characters != '';
+
 
 --Hversu margar persónur eru í hverri bók
 SELECT
@@ -23,9 +29,26 @@ SELECT
 FROM books;
 
 -- Hversu oft kemur Þengill fyrir í bókunum
-SELECT COUNT(*) AS total_occurrences
-FROM family
-WHERE name = 'Þengill';
+WITH RECURSIVE split AS (
+    SELECT
+        TRIM(SUBSTR(characters, 1, INSTR(characters || ',', ',') - 1)) AS character,
+        SUBSTR(characters, INSTR(characters || ',', ',') + 1) AS str
+    FROM
+        books
+    WHERE
+        characters IS NOT NULL
+    UNION ALL
+    SELECT
+        TRIM(SUBSTR(str, 1, INSTR(str || ',', ',') - 1)),
+        SUBSTR(str, INSTR(str || ',', ',') + 1)
+    FROM split
+    WHERE str != ''
+)
+SELECT
+    COUNT(*) AS total_occurrences
+FROM split
+WHERE character = 'Þengill';
+
 
 -- Hversu margir af Paladín ættinni
 SELECT COUNT(*) FROM family WHERE name LIKE '%Paladín%';
@@ -34,7 +57,11 @@ SELECT COUNT(*) FROM family WHERE name LIKE '%Paladín%';
 SELECT COUNT(*) FROM family WHERE chosen_one='evil';
 
 -- Hver er fæðingatíðni kvenna
-SELECT birth, COUNT(*) FROM family WHERE gender='F' AND birth IS NOT NULL GROUP BY birth ORDER BY birth ASC;
+SELECT birth, COUNT(*) AS total_females
+FROM family
+WHERE gender = 'F' AND birth IS NOT NULL
+GROUP BY birth
+ORDER BY birth ASC;
 
 -- Hvað er Ísfólkið margar blaðsíður samanlagt?
 SELECT SUM(pages) FROM books;
