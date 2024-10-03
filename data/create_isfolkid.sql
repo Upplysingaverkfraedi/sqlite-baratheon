@@ -1,32 +1,77 @@
--- Búa til töflu fyrir bækur ef hún er ekki til
+-- notast var við sqlite> .schema til að fá neðangreindar töflur
+
 CREATE TABLE IF NOT EXISTS books (
-    book_id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    pages INTEGER NOT NULL
+    id INTEGER PRIMARY KEY,
+    is_title TEXT,
+    no_title TEXT,
+    se_title TEXT,
+    year INTEGER,
+    is_year INTEGER,
+    is_release DATE,
+    pages INTEGER,
+    chapters INTEGER,
+    translator TEXT,
+    characters TEXT,
+    est_publication DATE
 );
 
--- Búa til töflu fyrir persónur ef hún er ekki til
-CREATE TABLE IF NOT EXISTS characters (
-    character_id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS alvarpid (
+    id INTEGER PRIMARY KEY,
+    book TEXT,
+    episode_title TEXT,
+    length INTEGER,
+    listeners INTEGER,
+    release DATE
+);
+
+CREATE TABLE IF NOT EXISTS family(
+    id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
-    gender TEXT,
-    birth_year INTEGER,
-    family TEXT,
-    evil_legacy INTEGER -- 1 ef persónan er með illan arf, 0 ef ekki
+    death INTEGER,
+    mom INTEGER REFERENCES family(id),
+    dad INTEGER REFERENCES family(id),
+    gender CHAR(1),
+    birth TINYINT,
+    chosen_one BOOLEAN
 );
 
--- Búa til töflu sem tengir persónur við bækur ef hún er ekki til
-CREATE TABLE IF NOT EXISTS appearances (
-    appearance_id INTEGER PRIMARY KEY,
-    book_id INTEGER,
-    character_id INTEGER,
-    FOREIGN KEY (book_id) REFERENCES books(book_id),
-    FOREIGN KEY (character_id) REFERENCES characters(character_id)
+CREATE TABLE IF NOT EXISTS marriage (
+    female INTEGER REFERENCES family(id),
+    male INTEGER REFERENCES family(id),
+    remark BOOLEAN DEFAULT FALSE
 );
 
--- Búa til töflu fyrir Ískisur ef hún er ekki til
-CREATE TABLE IF NOT EXISTS iskissur (
-    episode_id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    length_minutes INTEGER NOT NULL
+CREATE TABLE IF NOT EXISTS storytel_isfolkid (
+    id INTEGER PRIMARY KEY,
+    is_title TEXT,
+    reader TEXT,
+    reviews INTEGER,
+    rating REAL,
+    length INTEGER,
+    audiobook DATE,
+    ebook DATE,
+    description TEXT
+);
+
+CREATE TABLE IF NOT EXISTS storytel_iskisur(
+    episode INTEGER,
+    part INTEGER,
+    reviews INTEGER,
+    rating REAL,
+    release DATE,
+    description TEXT,
+    PRIMARY KEY (episode, part)
+);
+
+CREATE TABLE IF NOT EXISTS special_events(
+    date DATE,
+    event TEXT,
+    enddate DATE,
+    remark TEXT
+);
+
+CREATE TABLE IF NOT EXISTS children(
+    parent INTEGER REFERENCES family(id) NOT NULL,
+    child INTEGER REFERENCES family(id) NOT NULL,
+    PRIMARY KEY(parent, child)
 );
