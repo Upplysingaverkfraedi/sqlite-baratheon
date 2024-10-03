@@ -4,12 +4,12 @@
 Hér notuðum við skipunina`CREATE TABLE IF NOT EXISTS nafn á "nafnátöflu"` til þess að búa til hverja töflu. Hver tafla inniheldur dálka með mismunandi upplýsingum og kemur svo fram af hvaða gerð þær upplýsingar eru. Sem dæmi inniheldur línan `pages INTEGER`, í töflunni books, dálk með upplýsingum um blaðsíður bókanna og eru þær upplýsingar af gerðinni INTEGER, eða heiltölu.
 
 ### isfolkid.sql
-Skipanaskráin isfolkid.sql svarar mismunandi spurningum út frá upplýsingum frá skránni `isfolkid.db`. 
+Skipanaskráin isfolkid.sql svarar mismunandi spurningum út frá upplýsingum frá skránni `isfolkid.db`.
 
 **Hversu margar aðalpersónur eru í bókabálkinum?**
-SQL skipunin notar WITH RECURSIVE til að búa til tímabundna töflu sem kallast split, sem brýtur niður characters dálkinn úr books töflunni í aðskilda persónur.
+`SELECT SUM(LENGTH(characters) - LENGTH(REPLACE(characters, ',', '')) + 1) AS total_main_characters` reiknar heildarfjölda persóna í dálkinum `characters` fyrir allar bækur í `books` töflunni með því að greina fjölda nafna sem eru aðskilin með kommum
 **SVAR:**
-75
+102
 
 **Hversu margar persónur eru í hverri bók?**
 Skipunin telur fjölda persóna í hverri bók með því að reikna fjölda kommna í `characters` dálkinum, þar sem hver koma aðskildur hverja persónu. Hún skilar titli bókarinnar (`is_title`) ásamt fjölda persóna (`total_characters`) sem eru skráðar í characters dálknum.
@@ -63,7 +63,7 @@ Svarta vatnið|1
 Er einhver þarna úti?|1
 
 **Hversu oft kemur Þengill fyrir í bókunum?**
-Skipunin notar `CTE` til að brjóta niður characters dálkinn í books töflunni og skrá niður hvert persónuheiti. Hún telur síðan hversu oft persónan „Þengill“ kemur fyrir í þessum skiptum, sem skilar heildarfjölda vorkunnanna fyrir þennan persónuheiti.
+`characters LIKE '%Þengill%'` Leitar í dálkinum characters eftir öllu sem inniheldur orðið "Þengill" og `COUNT(*)` Telur fjölda þeirra lína þar sem orðið "Þengill" kemur fyrir.
 **Svar:**
 2
 

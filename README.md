@@ -1,5 +1,17 @@
 ## 2. Saga Ísfólksins
 
+Til þess að keyra dæmi 2 þarf sqlite að vera hlaðið í tölvuna.
+  - Fyrir macOS/linux: brew install sqlite
+  - Fyrir window notanda: hlaðið inn SQLite frá síðunni: https://www.sqlite.org/download.html
+
+Til þess að keyra dæmið þarf að byrja á því að keyra skipunina `sqlite3 data/isfolkid.db` í terminal
+Þá er hægt að:
+- sjá töflur sem að isfolkid inniheldur með því að keyra: `.tables` í terminal
+- skoða innihald hverrar toflu með því að keyra `SELECT * FROM tafla(t.d. books)` í terminal
+
+**Lausnir á spurningum**
+Skráin `isfolkid.sql` inniheldur skipanir fyrir svörin við hverri spurningu, til þess að sjá svörin þarf að keyra `.read isfolkid.sql` í terminal
+
 
 Verkefnið felur í sér að lesa inn SQLite gagnagrunninn [isfolkid.db](data/isfolkid.db) sem
 inniheldur ýmis gögn um bókabálkinn _Söga Ísfólksins_ eftir norska rithöfundinn Margit Sandemo,

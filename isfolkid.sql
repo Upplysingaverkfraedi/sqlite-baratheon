@@ -1,26 +1,7 @@
 -- Hversu margar aðalpersónur eru í bókabálkinum?
-WITH RECURSIVE split(characters, str) AS (
-    SELECT
-        '',
-        characters || ','
-    FROM
-        books
-    UNION ALL
-    SELECT
-        TRIM(SUBSTR(str, 0, INSTR(str, ','))),
-        SUBSTR(str, INSTR(str, ',') + 1)
-    FROM
-        split
-    WHERE
-        str != ''
-)
-SELECT
-    COUNT(DISTINCT characters)
-FROM
-    split
-WHERE
-    characters != '';
-
+SELECT SUM(LENGTH(characters) - LENGTH(REPLACE(characters, ',', '')) + 1) AS total_main_characters
+FROM books
+WHERE characters IS NOT NULL;
 
 --Hversu margar persónur eru í hverri bók
 SELECT
@@ -29,26 +10,9 @@ SELECT
 FROM books;
 
 -- Hversu oft kemur Þengill fyrir í bókunum
-WITH RECURSIVE split AS (
-    SELECT
-        TRIM(SUBSTR(characters, 1, INSTR(characters || ',', ',') - 1)) AS character,
-        SUBSTR(characters, INSTR(characters || ',', ',') + 1) AS str
-    FROM
-        books
-    WHERE
-        characters IS NOT NULL
-    UNION ALL
-    SELECT
-        TRIM(SUBSTR(str, 1, INSTR(str || ',', ',') - 1)),
-        SUBSTR(str, INSTR(str || ',', ',') + 1)
-    FROM split
-    WHERE str != ''
-)
-SELECT
-    COUNT(*) AS total_occurrences
-FROM split
-WHERE character = 'Þengill';
-
+SELECT COUNT(*) AS total_occurrences
+FROM books
+WHERE characters LIKE '%Þengill%';
 
 -- Hversu margir af Paladín ættinni
 SELECT COUNT(*) FROM family WHERE name LIKE '%Paladín%';
